@@ -10,10 +10,11 @@ Install from GitHub:
 pi install git:github.com/itsomidho/pi-statusbar
 ```
 
-Run `/reload` in an existing Pi session. Authenticate with OpenAI Codex through
-Pi's `/login` on each device to enable quota meters. Never copy authentication
-files into this repository. Git/PR details require Git and optionally authenticated
-`gh`/`glab` on that device.
+Run `/reload` in an existing Pi session. **OpenAI Codex is not required:** the
+statusbar's general features use the active model/provider configured in Pi.
+See [Provider setup and quota support](#provider-setup-and-quota-support) below.
+Never copy authentication files into this repository. Git/PR details require
+Git and optionally authenticated `gh`/`glab` on that device.
 
 Update installed packages with `pi update --extensions`, then `/reload`.
 Remove with `pi remove git:github.com/itsomidho/pi-statusbar`.
@@ -21,6 +22,38 @@ Remove with `pi remove git:github.com/itsomidho/pi-statusbar`.
 Do not load both the Git package and a manually copied extension simultaneously.
 For manual installation, copy this directory to
 `~/.pi/agent/extensions/pi-statusbar/` instead.
+
+## Provider setup and quota support
+
+Install the extension once; the installation command is the same for every
+provider. Inside Pi, use `/login` to configure your provider and `/model` to
+select a model. Available login methods depend on your Pi version and provider.
+Authenticate separately on each device; do not transfer or commit `auth.json`.
+
+| Provider | Configure in Pi | General statusbar | Provider quota meters |
+|---|---|---|---|
+| OpenAI Codex / ChatGPT subscription (`openai-codex`) | `/login`, select OpenAI Codex and complete the offered sign-in flow | Yes | Real 5h/7d used percentages and reset times, when the account endpoint supplies them |
+| OpenAI API (`openai`) | `/login`, select OpenAI and provide an API key; alternatively set `OPENAI_API_KEY` before starting Pi | Yes | Not implemented; OpenAI API limits are not ChatGPT subscription quotas |
+| Anthropic (`anthropic`) | `/login`, select Anthropic and use a supported method; API-key users can alternatively set `ANTHROPIC_API_KEY` | Yes | Not implemented, including Anthropic subscription quotas |
+| GitHub Copilot (`github-copilot`) | `/login`, select GitHub Copilot and complete the offered flow; supported token configuration can use `COPILOT_GITHUB_TOKEN` | Yes | Copilot-specific allowance/premium-request meters are not implemented |
+| Google Gemini, OpenRouter and other built-in providers | Configure the provider through Pi's `/login` or its documented environment variables, then select it with `/model` | Yes | Not implemented |
+| Local models, custom providers and compatible API endpoints | Configure the provider/model using Pi's documentation, then select it with `/model` | Yes, for data exposed by Pi | Not implemented |
+
+“General statusbar” means the model name, context usage when available, thinking
+level when applicable, tool activity/mascot, and local project/Git/system details.
+Individual models may not expose every metric. General rendering uses Pi's APIs;
+not every provider has been independently tested end to end.
+
+**Only the `openai-codex` provider triggers the quota request.** Choosing an
+OpenAI model through Copilot, OpenRouter or another provider does not enable
+Codex quotas. When switching away from Codex, its quota meters are hidden;
+other providers' credentials are not sent to the ChatGPT usage endpoint.
+Missing or unsupported quotas are hidden, never estimated from token counts.
+
+For provider authentication details, consult the `docs/providers.md` shipped
+with your Pi installation. Adding quota support for another provider requires
+a separate integration with that provider's available account/usage API;
+changing the installation command alone cannot enable it.
 
 ## Features
 
