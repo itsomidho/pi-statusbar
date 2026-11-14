@@ -4,7 +4,7 @@ Native Pi port of the animated mascot from `itsomidho/clawd-statusbar` (MIT).
 ## Install on another device
 
 Requires Node.js and a current Pi installation supporting `ctx.ui.setFooter()`.
-Once the GitHub repository is published:
+Install from GitHub:
 
 ```sh
 pi install git:github.com/itsomidho/pi-statusbar
